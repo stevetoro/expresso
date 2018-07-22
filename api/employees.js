@@ -10,4 +10,27 @@ router.get('/', (req, res, next) => {
   });
 });
 
+router.post('/', (req, res, next) => {
+  const { name, position, wage, is_currently_employed = 1 } = req.body.employee;
+  if (!(name && position && wage)) return res.sendStatus(400);
+
+  db.run(`
+    INSERT INTO Employee (name, position, wage, is_currently_employed)
+    VALUES ($name, $position, $wage, $is_currently_employed)`, 
+    {
+      $name: name,
+      $position: position,
+      $wage: wage,
+      $is_currently_employed: is_currently_employed,
+    },
+    function (err) {
+      if (err) return next(err);
+      db.get(`SELECT * FROM Employee WHERE Employee.id = ${this.lastID}`, (err, employee) => {
+        if (err) return next(err);
+        return res.status(201).send({ employee });
+      });
+    }
+  );
+});
+
 module.exports = router;
