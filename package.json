@@ -1,0 +1,8 @@
+{
+  "name": "expresso",
+  "version": "0.0.0",
+  "description": "An internal management tool for a coffee shop called Expresso.",
+  "main": "index.js",
+  "author": "Steve Toro <steve@stevetoro.com>",
+  "license": "ISC"
+}
