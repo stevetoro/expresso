@@ -33,4 +33,18 @@ router.post('/', (req, res, next) => {
   );
 });
 
+router.param('employeeId', (req, res, next, employeeId) => {
+  db.get(`SELECT * FROM Employee WHERE Employee.id = ${employeeId}`, (err, employee) => {
+    if (err) return next(err);
+    if (!employee) return res.sendStatus(404);
+    
+    req.employee = employee;
+    return next();
+  });
+});
+
+router.get('/:employeeId', (req, res, next) => {
+  return res.status(200).send({ employee: req.employee });
+});
+
 module.exports = router;
