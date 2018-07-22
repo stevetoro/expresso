@@ -7,9 +7,13 @@ const errorhandler = require('errorhandler');
 const app = express();
 const PORT = process.env.PORT || 4001;
 
+const apiRouter = require('./api');
+
 app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+
+app.use('/api', apiRouter);
 
 app.use(errorhandler());
 
