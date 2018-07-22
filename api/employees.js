@@ -73,4 +73,18 @@ router.put('/:employeeId', (req, res, next) => {
   );
 });
 
+router.delete('/:employeeId', (req, res, next) => {
+  db.run(`
+    UPDATE Employee SET is_currently_employed = 0
+    WHERE Employee.id = ${req.params.employeeId}`,
+    function (err) {
+      if (err) return next(err);
+      db.get(`SELECT * FROM Employee WHERE Employee.id = ${req.params.employeeId}`, (err, employee) => {
+        if (err) return next(err);
+        return res.status(200).send({ employee });
+      });
+    }
+  );
+});
+
 module.exports = router;
