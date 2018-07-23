@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database('./database.sqlite');
+const timesheetsRouter = require('./timesheets');
 
 router.get('/', (req, res, next) => {
   db.all(`SELECT * FROM Employee WHERE Employee.is_currently_employed = 1`, (err, employees) => {
@@ -86,5 +87,7 @@ router.delete('/:employeeId', (req, res, next) => {
     }
   );
 });
+
+router.use('/:employeeId/timesheets', timesheetsRouter);
 
 module.exports = router;
