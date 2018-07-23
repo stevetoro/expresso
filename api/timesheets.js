@@ -33,4 +33,18 @@ router.post('/', (req, res, next) => {
   );
 });
 
+router.param('timesheetId', (req, res, next, timesheetId) => {
+  db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${timesheetId}`, (err, timesheet) => {
+    if (err) return next(err);
+    if (!timesheet) return res.sendStatus(404);
+
+    req.timesheet = timesheet;
+    return next();
+  });
+});
+
+router.get('/:timesheetId', (req, res, next) => {
+  return res.status(200).send({ timesheet: req.timesheet });
+});
+
 module.exports = router;
