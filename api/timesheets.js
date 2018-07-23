@@ -47,4 +47,28 @@ router.get('/:timesheetId', (req, res, next) => {
   return res.status(200).send({ timesheet: req.timesheet });
 });
 
+router.put('/:timesheetId', (req, res, next) => {
+  const { hours, rate, date } = req.body.timesheet;
+  if (!(hours && rate && date)) return res.sendStatus(400);
+
+  db.run(`
+    UPDATE Timesheet SET hours = $hours,
+      rate = $rate,
+      date = $date
+    WHERE Timesheet.id = ${req.timesheet.id}`,
+    {
+      $hours: hours,
+      $rate: rate,
+      $date: date,
+    },
+    function (err) {
+      if (err) return next(err);
+      db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${req.timesheet.id}`, (err, timesheet) => {
+        if (err) return next(err);
+        return res.status(200).send({ timesheet });
+      });
+    }
+  );
+});
+
 module.exports = router;
