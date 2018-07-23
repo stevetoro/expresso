@@ -10,4 +10,27 @@ router.get('/', (req, res, next) => {
   });
 });
 
+router.post('/', (req, res, next) => {
+  const { hours, rate = req.employee.wage, date = Date(new Date()) } = req.body.timesheet;
+  if (!hours) return res.sendStatus(400);
+
+  db.run(`
+    INSERT INTO Timesheet (hours, rate, date, employee_id)
+    VALUES ($hours, $rate, $date, $employee_id)`,
+    {
+      $hours: hours,
+      $rate: rate,
+      $date: date,
+      $employee_id: req.employee.id,
+    },
+    function (err) {
+      if (err) return next(err);
+      db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${this.lastID}`, (err, timesheet) => {
+        if (err) return next(err);
+        return res.status(201).send({ timesheet });
+      });
+    }
+  );
+});
+
 module.exports = router;
