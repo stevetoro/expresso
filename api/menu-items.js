@@ -48,4 +48,30 @@ router.get('/:menuItemId', (req, res, next) => {
   return res.status(200).send({ menuItem: req.menuItem });
 });
 
+router.put('/:menuItemId', (req, res, next) => {
+  const { name, description, inventory, price } = req.body.menuItem;
+  if (!(name && description && inventory && price)) return res.sendStatus(400);
+
+  db.run(`
+    UPDATE MenuItem SET name = $name,
+      description = $description,
+      inventory = $inventory,
+      price = $price
+    WHERE MenuItem.id = ${req.menuItem.id}`,
+    {
+      $name: name,
+      $description: description,
+      $inventory: inventory,
+      $price: price
+    },
+    err => {
+      if (err) return next(err);
+      db.get(`SELECT * FROM MenuItem WHERE MenuItem.id = ${req.menuItem.id}`, (err, menuItem) => {
+        if (err) return next(err);
+        return res.status(200).send({ menuItem });
+      });
+    }
+  );
+});
+
 module.exports = router;
