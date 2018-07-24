@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database('./database.sqlite');
+const menuItemsRouter = require('./menu-items');
 
 router.get('/', (req, res, next) => {
   db.all('SELECT * FROM Menu', (err, menus) => {
@@ -75,5 +76,7 @@ router.delete('/:menuId', (req, res, next) => {
     });
   });
 });
+
+router.use('/:menuId/menu-items', menuItemsRouter);
 
 module.exports = router;
