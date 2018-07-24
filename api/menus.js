@@ -44,4 +44,24 @@ router.get('/:menuId', (req, res, next) => {
   return res.status(200).send({ menu: req.menu });
 });
 
+router.put('/:menuId', (req, res, next) => {
+  let { title } = req.body.menu;
+  if (!title) return res.sendStatus(400);
+
+  db.run(`
+    UPDATE Menu SET title = $title
+    WHERE Menu.id = ${req.menu.id}`,
+    {
+      $title: title
+    },
+    function (err) {
+      if (err) return next(err);
+      db.get(`SELECT * FROM Menu WHERE Menu.id = ${req.menu.id}`, (err, menu) => {
+        if (err) return next(err);
+        return res.status(200).send({ menu });
+      });
+    }
+  );
+});
+
 module.exports = router;
