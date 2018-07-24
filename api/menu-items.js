@@ -74,4 +74,11 @@ router.put('/:menuItemId', (req, res, next) => {
   );
 });
 
+router.delete('/:menuItemId', (req, res, next) => {
+  db.run(`DELETE FROM MenuItem WHERE MenuItem.id = ${req.menuItem.id}`, err => {
+    if (err) return next(err);
+    return res.sendStatus(204);
+  });
+});
+
 module.exports = router;
