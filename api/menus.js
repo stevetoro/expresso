@@ -64,4 +64,16 @@ router.put('/:menuId', (req, res, next) => {
   );
 });
 
+router.delete('/:menuId', (req, res, next) => {
+  db.get(`SELECT * FROM MenuItem WHERE MenuItem.menu_id = ${req.menu.id}`, (err, menuItem) => {
+    if (err) return next(err);
+    if (menuItem) return res.sendStatus(400);
+
+    db.run(`DELETE FROM Menu WHERE Menu.id = ${req.menu.id}`, err => {
+      if (err) return next(err);
+      return res.sendStatus(204);
+    });
+  });
+});
+
 module.exports = router;
