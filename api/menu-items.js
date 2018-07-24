@@ -34,4 +34,18 @@ router.post('/', (req, res, next) => {
   );
 });
 
+router.param('menuItemId', (req, res, next, menuItemId) => {
+  db.get(`SELECT * FROM MenuItem WHERE MenuItem.id = ${menuItemId}`, (err, menuItem) => {
+    if (err) return next(err);
+    if (!menuItem) return res.sendStatus(404);
+
+    req.menuItem = menuItem;
+    return next();
+  });
+});
+
+router.get('/:menuItemId', (req, res, next) => {
+  return res.status(200).send({ menuItem: req.menuItem });
+});
+
 module.exports = router;
